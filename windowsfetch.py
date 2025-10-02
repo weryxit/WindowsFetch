@@ -94,20 +94,17 @@ class WindowsFastFetch:
 
     def get_fast_info(self):
         return {
-            "os": self.get_os_info(),
-            "host": self.get_host_info(),
-            "user": self.get_user_info(),
-            "uptime": self.get_uptime(),
-            "cpu": self.get_cpu_info(),
-            "gpu": self.get_gpu_info(),
-            "memory": self.get_memory(),
-            "disk": self.get_disk(),
-            "resolution": self.get_resolution(),
-            "terminal": self.get_terminal(),
-            "network": self.get_network(),
-            "python": platform.python_version(),
-            "processes": self.get_processes(),
-            "started": self.start_time.strftime("%H:%M:%S"),
+            "OS": self.get_os_info(),
+            "Host": self.get_host_info(),
+            "Processes": self.get_processes(),
+            "Resolution": self.get_resolution(),
+            "CLR Version": self.run_ps_cached("[System.Environment]::Version.ToString()") or "N/A",
+            "Uptime": self.get_uptime(),
+            "RAM": self.get_memory(),
+            "CPU": self.get_cpu_info(),
+            "GPU": self.get_gpu_info(),
+            "User": self.get_user_info(),
+            "Root Dir": os.environ.get("SystemRoot", "C:\\Windows"),
         }
 
     def get_os_info(self):
@@ -175,7 +172,13 @@ class WindowsFastFetch:
         print("\033c", end="")
 
         info = self.get_fast_info()
-        info_lines = [self.gradient_label(k, v) for k, v in info.items()]
+
+        header = f"{self.get_user_info()}@{self.get_host_info()}"
+        print(self.gradient_text(header))
+        print("-" * len(header))
+
+        max_key_len = max(len(k) for k in info.keys())
+        info_lines = [f"{self.gradient_text(k.ljust(max_key_len))}: {self.colorize(v,'white')}" for k, v in info.items()]
 
         for art_line, info_line in zip_longest(self.ascii_art, info_lines, fillvalue=""):
             art_colored = self.gradient_text(art_line) if art_line else " " * 40
