@@ -12,7 +12,7 @@ Displays system information with ASCII art and colored output directly in the te
 
 ## ✨ Features  
 
-- Clean ASCII art + gradient text  
+- Clean ASCII art + gradient text (you can edit the source code)
 - Shows OS, CPU, GPU, RAM, disk, uptime, resolution, processes, and more  
 - Colored output with palette preview (like real fastfetch)  
 - Lightweight and easy to use  
