@@ -47,7 +47,7 @@ if %errorlevel% neq 0 (
       start /wait "" "%PY_INSTALLER%" /quiet InstallAllUsers=1 PrependPath=1 Include_test=0
       del /f /q "%PY_INSTALLER%"
     ) else (
-      echo [!] Failed to download Python. Aborting.
+      echo [!] Failed to download Python. Aborting. Try to install the latest version of Python manually.
       pause
       exit /b 1
     )
@@ -63,7 +63,7 @@ if %errorlevel% neq 0 (
 )
 
 :: --- Install Libs ---
-pip install psutil colorize cx_Freeze pyinstaller
+pip install psutil colorize cx_Freeze pyinstaller requests
 
 :: --- Copy windowsfetch.py ---
 if not exist "%~dp0windowsfetch.py" (
@@ -73,6 +73,18 @@ if not exist "%~dp0windowsfetch.py" (
 )
 
 copy /y "%~dp0windowsfetch.py" "%TARGET%\windowsfetch.py" >nul
+
+:: --- Copy wfconfig.conf ---
+if exist "%TARGET%\wfconfig.conf" (
+  del /f /q "%TARGET%\wfconfig.conf"
+  echo [*] Old wfconfig.conf removed.
+)
+if exist "%~dp0wfconfig.conf" (
+  copy /y "%~dp0wfconfig.conf" "%TARGET%\wfconfig.conf" >nul
+  echo [*] New wfconfig.conf copied.
+) else (
+  echo [!] wfconfig.conf not found in installer folder, skipping.
+)
 
 :: --- Create CMD launcher ---
 set CMDFILE=%TARGET%\windowsfetch.cmd
